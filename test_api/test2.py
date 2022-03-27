@@ -1,0 +1,110 @@
+from instagram_private_api import Client
+from collections import Counter
+import database as db
+import find_duplicates as dp
+
+user_name = ''
+password = ''
+api = Client(user_name, password)
+rank_token = api.generate_uuid()
+
+tokens_list = [705805118,4519991641,705805118,864296484,3276588595,51236702203,51767856845,25698352794,3005371999,233999021,3570308545,46322577617,
+2267118783,
+1437225615,
+283383949,
+2070578946,
+1468997459,
+1039717559,
+49403987968,
+1209788360,
+529464688,
+7062493932,
+6185212841,
+23772649910,
+12399324738,
+8626636151,
+2297933826,
+506450225,
+1425472100,
+32180588512,
+3156145089,
+3114460542,
+7725170192,
+502770411,
+2815344089,
+531111991,
+1414071063,
+2434671897,
+1181181776,
+9261385567,
+293206178,
+447581510,
+3991199834,
+7225742249,
+517477822,
+3067334237,
+5672192488,
+4338332545,
+6633826026,
+425375933,
+48927576416,
+1624775602,
+5683518924,
+1591877448,
+1225842931,
+8741343,
+2175724994,
+7069232717,
+217313823,
+1982879597,
+26916794104,
+1765531673,
+9670429369,
+16824915180,
+1414860336,
+6013999420,
+403353155,
+623829595,
+2094919444,
+174470826,
+3111416724,
+560267150,
+14184129783,
+662184949,
+17721201,
+429695908,
+2560470278,
+16681781945,
+6919177660,
+41166247464,
+1962903346,
+3242151043,
+1057808828,
+2149749934,
+1519274556,
+45846874789,
+1186880,
+2283942435,
+361251547,
+3939276153,
+1777543238
+]
+
+followee_list = []
+full_followee_list = []
+for i in range(len(tokens_list)):
+    followee_list = api.user_following(user_id=tokens_list[i], rank_token=rank_token)['users']
+    for l in range(len(followee_list)):
+        full_followee_list.append(followee_list[l]['username'])
+print(Counter(full_followee_list).keys())
+print(Counter(full_followee_list).values())
+
+dictOfElems = dp.getDuplicatesWithCount(full_followee_list)
+usernames = []
+frequency = []
+for key, value in dictOfElems.items():
+    usernames.append(key)
+    frequency.append(value)
+
+for i in range(len(usernames)):
+    db.addDataToDatabase(usernames[i], frequency[i])
